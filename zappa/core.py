@@ -292,8 +292,11 @@ class Zappa(object):
         if load_credentials:
             self.load_credentials(boto_session, profile_name)
 
+            # Gives us the option to skip SSL when in the context of a proxy
+            use_ssl = os.environ.get('ZAPPA_NO_VERIFY_SSL', '') != '1'
+
             # Initialize clients
-            self.s3_client = self.boto_client('s3')
+            self.s3_client = self.boto_client('s3', use_ssl=use_ssl)
             self.lambda_client = self.boto_client('lambda', config=long_config)
             self.events_client = self.boto_client('events')
             self.apigateway_client = self.boto_client('apigateway')
